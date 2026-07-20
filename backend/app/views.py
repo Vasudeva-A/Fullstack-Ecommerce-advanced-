@@ -38,3 +38,12 @@ class Product_View(generics.ListCreateAPIView):
 class ProductDetailView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+
+
+class ProfileView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes =[IsAuthenticated]
+
+    def get_object(self):
+        return Profile.objects.get(user= self.request.user)
