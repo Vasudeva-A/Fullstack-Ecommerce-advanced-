@@ -46,4 +46,7 @@ class ProfileView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes =[IsAuthenticated]
 
     def get_object(self):
-        return Profile.objects.get(user= self.request.user)
+        profile, created = Profile.objects.get_or_create(
+            user=self.request.user
+        )
+        return profile

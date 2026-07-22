@@ -21,6 +21,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             email= validated_data['email'],
             password=validated_data['password']
         )
+        # Profile.objects.create(user=user)
         return user
 
 
@@ -46,5 +47,5 @@ class ProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
 
     class Meta:
-        models = Profile
+        model = Profile
         fields = "__all__"
