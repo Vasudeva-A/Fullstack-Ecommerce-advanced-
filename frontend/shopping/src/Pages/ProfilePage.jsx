@@ -1,18 +1,28 @@
 import React, { useEffect, useState } from "react";
-
+import {useNavigate} from 'react-router-dom'
+import Loader from "../Components/Loader/Loader";
+import {BASE_URL} from "../config"
 const ProfilePage = () => {
   let [profile, setProfile] = useState();
   let [image, setImage] = useState(null);
   let token = localStorage.getItem("access");
   //   console.log(token)
+  let navigate = useNavigate()
 
   let fetchProducts = async () => {
     try {
-      let response = await fetch("http://127.0.0.1:8000/accounts/profile/", {
+      let response = await fetch(`${BASE_URL}/profile/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      if (response.status === 401){
+        alert("Your Session has been Expired TO continue Please Login Again")
+        localStorage.removeItem("access")
+        localStorage.removeItem("refresh")
+        navigate('/login')
+        return
+      }
       let data = await response.json();
       setProfile(data);
     } catch (err) {
@@ -36,7 +46,7 @@ const ProfilePage = () => {
     formData.append("profile_image", image);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/accounts/profile/", {
+      const response = await fetch(`${BASE_URL}/register/profile/`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -45,13 +55,15 @@ const ProfilePage = () => {
       });
       if (response.ok) {
         alert("Profile image updated");
-        fetchProfile();
+        fetchProducts();
       }
     } catch (err) {
       console.log(err);
     }
   };
-  if (!profile) return <h3>Loading...</h3>;
+  if (!profile)  {
+    return <Loader/>
+  }
 
   return (
     <div style={{ width: "350px", margin: "40px auto" }}>

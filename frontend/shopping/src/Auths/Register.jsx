@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
+import ButtonLoader from "../Components/Loader/ButtonLoader";
+
+import {BASE_URL} from "../config"
 
 const Register = () => {
+  let navigate = useNavigate()
+  let [isLoading,setIsLoading] = useState(false)
   let [errors, setErrors] = useState({});
   let [formData, setFormData] = useState({
     username: "",
@@ -11,9 +16,10 @@ const Register = () => {
   });
   let handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true)
     try {
       console.log(formData);
-      let res = await fetch("http://127.0.0.1:8000/accounts/register/", {
+      let res = await fetch(`${BASE_URL}/register/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -26,13 +32,16 @@ const Register = () => {
       if (res.ok) {
         setErrors({});
         alert("Registration Successful!");
-        console.log(data);
-        setFormData({
-          username: "",
-          email: "",
-          password: "",
-          confirm_password: "",
-        });
+        // console.log(data);
+        // setFormData({
+        //   username: "",
+        //   email: "",
+        //   password: "",
+        //   confirm_password: "",
+        // });
+        setIsLoading(true)
+        navigate('/login')
+      
       } else {
         console.log(data);
         setErrors(data);
@@ -40,6 +49,8 @@ const Register = () => {
       }
     } catch (error) {
       console.log(error);
+    }finally{
+      setIsLoading(false)
     }
   };
   let handleChange = (e) => {
@@ -112,12 +123,14 @@ const Register = () => {
                   </small>
                 )}
               </div>
-              <div className="mb-3">
-                <button type="submit" className="btn btn-primary">
-                  submit
+              <div className="mb-3  ">
+                <button type="submit" className="btn btn-primary w-100 shadow-lg" disabled={isLoading}>
+                  {
+                    isLoading ? (<ButtonLoader/>) : ("Register")
+                  }
                 </button>
               </div>
-              <div className="mb-3 text-center">
+              <div className="mb-3 mt-3 text-center">
                 <p className="text-muted">
                   Already have an account? <Link to="/login">Login</Link>
                 </p>

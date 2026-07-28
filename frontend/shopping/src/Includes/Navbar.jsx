@@ -47,11 +47,11 @@ const Navbar = () => {
             </li>
             {isLoggedIn ? (
               <>
-                {/* <li className="nav-item">
-                  <Link className="nav-link" to="/">
-                    Home
+                 <li className="nav-item">
+                  <Link className="nav-link" to="/cart">
+                    Cart
                   </Link>
-                </li> */}
+                </li>  
                 <li className="nav-item">
                   <Link className="nav-link" to="/profile">
                     Profile

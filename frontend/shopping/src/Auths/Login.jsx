@@ -1,10 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
+import ButtonLoader from "../Components/Loader/ButtonLoader";
+import { BASE_URL } from "../config";
 
 const Login = () => {
-  let{setIsLoggedIn } = useContext(AuthContext)
+  let { setIsLoggedIn, setUser } = useContext(AuthContext);
   let [errors, setErrors] = useState({});
+  let [isLoading, setIsLoading] = useState(false);
   let [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -12,9 +15,10 @@ const Login = () => {
   let navigate = useNavigate();
   let handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       // console.log(formData);
-      let res = await fetch("http://127.0.0.1:8000/accounts/login/", {
+      let res = await fetch(`${BASE_URL}/login/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,14 +32,25 @@ const Login = () => {
         setErrors({});
         localStorage.setItem("access", data.access);
         localStorage.setItem("refresh", data.refresh);
+        const profileResponse = await fetch(`${BASE_URL}/profile/`, {
+          headers: {
+            Authorization: `Bearer ${data.access}`,
+          },
+        });
+
+        if (profileResponse.ok) {
+          const profile = await profileResponse.json();
+          setUser(profile);
+        }
         alert("Login Successful!");
         console.log(data);
         setFormData({
           username: "",
           password: "",
         });
-        setIsLoggedIn(true)
-        navigate('/')
+        setIsLoggedIn(true);
+        // setIsLoading(true);
+        navigate("/");
       } else {
         console.log(data);
         setErrors(data);
@@ -43,6 +58,8 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
   let handleChange = (e) => {
@@ -88,11 +105,15 @@ const Login = () => {
                 />
               </div>
 
-              <div className="mb-3">
-                <button type="submit" className="btn btn-primary">
-                  submit
+              <div className="mb-4">
+                <button
+                  type="submit"
+                  className="btn btn-primary w-100 shadow-lg"
+                  disabled={isLoading}
+                >
+                  {isLoading ? <ButtonLoader /> : "Login"}
                 </button>
-                <div className="mb-3 text-center">
+                <div className="mb-3 mt-3 text-center">
                   <p className="text-muted">
                     Don't have an account? <Link to="/register">Register</Link>
                   </p>

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
+import Loader from "../Components/Loader/Loader";
+import {BASE_URL} from "../config"
 const ProductDetailPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/accounts/products/${id}/`)
+    fetch(`${BASE_URL}/products/${id}/`)
       .then((res) => res.json())
       .then((data) => setProduct(data))
       .catch((err) => console.log(err));
@@ -14,9 +15,7 @@ const ProductDetailPage = () => {
 
   if (!product) {
     return (
-      <div className="container py-5 text-center">
-        <div className="spinner-border text-primary"></div>
-      </div>
+      <Loader/>
     );
   }
 

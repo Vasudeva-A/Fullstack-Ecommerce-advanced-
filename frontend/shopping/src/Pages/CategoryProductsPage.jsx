@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
+import Loader from "../Components/Loader/Loader";
+import {BASE_URL} from "../config"
 const CategoryProductsPage = () => {
     let {id} = useParams()
   let [products, setProducts] = useState([]);
@@ -12,7 +13,7 @@ const CategoryProductsPage = () => {
       try {
         setIsLoading(true);
         setError(null);
-        let response = await fetch(`http://127.0.0.1:8000/accounts/category/${id}/products/`);
+        let response = await fetch(`${BASE_URL}/category/${id}/products/`);
         if (!response.ok) {
           // console.log(response)
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -30,9 +31,7 @@ const CategoryProductsPage = () => {
   }, [id]);
   if (isLoading) {
     return (
-      <div style={{ textAlign: "center", padding: "40px", fontSize: "1.2rem" }}>
-        Loading products...
-      </div>
+      <Loader/>
     );
   }
 

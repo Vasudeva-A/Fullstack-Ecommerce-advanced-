@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Slider from "../Includes/Slider";
-
+import Loader from "./Loader/Loader";
+import {BASE_URL} from "../config"
 const HomePage = () => {
   let [products, setProducts] = useState([]);
   let [isLoading, setIsLoading] = useState(true);
@@ -12,7 +13,7 @@ const HomePage = () => {
       try {
         setIsLoading(true);
         setError(null);
-        let response = await fetch("http://127.0.0.1:8000/accounts/home/");
+        let response = await fetch(`${BASE_URL}/home/`);
         if (!response.ok) {
           // console.log(response)
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -30,9 +31,7 @@ const HomePage = () => {
   }, []);
   if (isLoading) {
     return (
-      <div style={{ textAlign: "center", padding: "40px", fontSize: "1.2rem" }}>
-        Loading products...
-      </div>
+      <Loader/> 
     );
   }
 
