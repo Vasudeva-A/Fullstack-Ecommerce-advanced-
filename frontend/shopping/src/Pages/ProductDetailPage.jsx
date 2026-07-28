@@ -1,10 +1,48 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../Components/Loader/Loader";
-import {BASE_URL} from "../config"
+import { BASE_URL } from "../config";
+import ButtonLoader from "../Components/Loader/ButtonLoader";
 const ProductDetailPage = () => {
+  let navigate = useNavigate()
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  let [isLoading, setIsLoading] = useState(false);
+  let token = localStorage.getItem("access");
+
+
+  let handleAddToCart = async () => {
+    setIsLoading(true)
+    if (!token) {
+      alert("Please login first");
+      navigate('/login')
+      return;
+    }
+    try {
+      let res = await fetch(`${BASE_URL}/add-to-cart/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          product_id: product.id,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert('added to cart');
+      } else {
+        alert(data.error || "Something went wrong");
+      }
+    } catch (err) {
+      console.log(err);
+    }finally{
+      setIsLoading(false)
+    }
+  };
+
+
 
   useEffect(() => {
     fetch(`${BASE_URL}/products/${id}/`)
@@ -14,16 +52,13 @@ const ProductDetailPage = () => {
   }, [id]);
 
   if (!product) {
-    return (
-      <Loader/>
-    );
+    return <Loader />;
   }
 
   return (
     <div className="container py-5">
       <div className="   border-0 rounded-4">
         <div className="row g-0">
-
           {/* Product Image */}
           <div className="col-md-5 text-center p-4 ">
             <img
@@ -40,14 +75,11 @@ const ProductDetailPage = () => {
           {/* Product Details */}
           <div className="col-md-7">
             <div className="card-body p-4">
-
               <span className="badge bg-primary mb-3 fs-6">
                 {product.cate?.name}
               </span>
 
-              <h2 className="fw-bold">
-                {product.name}
-              </h2>
+              <h2 className="fw-bold">{product.name}</h2>
 
               <div className="my-3">
                 <span className="fs-2 fw-bold text-success">
@@ -62,7 +94,7 @@ const ProductDetailPage = () => {
                   {Math.round(
                     ((product.original_price - product.offer_price) /
                       product.original_price) *
-                      100
+                      100,
                   )}
                   % OFF
                 </span>
@@ -78,14 +110,11 @@ const ProductDetailPage = () => {
 
               <h5>Description</h5>
 
-              <p className="text-secondary">
-                {product.description}
-              </p>
+              <p className="text-secondary">{product.description}</p>
 
               <hr />
 
               <div className="d-flex align-items-center">
-
                 <img
                   src={product.cate?.image}
                   alt={product.cate?.name}
@@ -95,30 +124,24 @@ const ProductDetailPage = () => {
                 />
 
                 <div className="ms-3">
-                  <h6 className="mb-0">
-                    Category
-                  </h6>
+                  <h6 className="mb-0">Category</h6>
 
                   <strong>{product.cate?.name}</strong>
                 </div>
-
               </div>
 
               <div className="mt-4 d-flex gap-3">
-
-                <button className="btn btn-warning btn-lg">
-                  🛒 Add to Cart
+                <button className="btn btn-outline-dark btn-lg border-1 shadow-lg" onClick={handleAddToCart} disabled={isLoading}>
+                  {
+                
+                isLoading ?"Adding..." :'Add To Cart'
+                }
                 </button>
 
-                <button className="btn btn-success btn-lg">
-                  Buy Now
-                </button>
-
+                <button className="btn btn-success btn-lg">Buy Now</button>
               </div>
-
             </div>
           </div>
-
         </div>
       </div>
     </div>

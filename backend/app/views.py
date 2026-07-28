@@ -56,10 +56,10 @@ class ProfileView(generics.RetrieveUpdateDestroyAPIView):
 
 class CartView(generics.ListAPIView):
     serializer_class = CartSerializer
-    queryset = Cart.objects.all()
+    # queryset = Cart.objects.all()
     permission_classes = [IsAuthenticated]
 
-    def get_object(self):
+    def get_queryset(self):
         return  Cart.objects.filter(user =  self.request.user)
 
 class AddToCart(APIView):
@@ -85,9 +85,50 @@ class AddToCart(APIView):
             cart_item.quantity +=1
             cart_item.total = cart_item.quantity * product.offer_price
             cart_item.save()
-            return Response(
+        return Response(
                 {
                     "message": "Product added to cart successfully"
                 },
                 status=status.HTTP_200_OK,
             )
+
+
+class IncreaseQuantity(APIView):
+    permission_classes = [IsAuthenticated]
+    def patch(self,request,pk):
+        try:
+            cart_item = Cart.objects.get(id=pk, user=request.user)
+        except Cart.DoesNotExist:
+            return Response(
+                {"error": "Cart item not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        cart_item.quantity += 1
+        cart_item.total = cart_item.quantity * cart_item.product.offer_price
+        cart_item.save()
+
+        return Response(
+            {"message": "Quantity increased successfully"},
+            status=status.HTTP_200_OK
+        )
+
+
+class DecreaseQuantity(APIView):
+    permission_classes = [IsAuthenticated]
+    def patch(self,request,pk):
+        try:
+            cart_item = Cart.objects.get(id = pk,user=request.user)
+        except Cart.DoesNotExist:
+            return Response(
+                {
+                    'error':"cart Item not found"
+                },status=status.HTTP_200_OK
+            )
+        if cart_item.quantity >1:
+            cart_item.quantity -=1
+            cart_item.total = cart_item.quantity * cart_item.product.offer_price
+            cart_item.save()
+
+            return Response({"message":"decreased succesfully"},status=status.HTTP_200_OK)
+        return Response({'error':"Cannot decrease then 0"},status=status.HTTP_400_BAD_REQUEST)
+

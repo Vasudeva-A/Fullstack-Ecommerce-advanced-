@@ -5,11 +5,11 @@ import { AuthContext } from "../Auths/AuthContext";
 import { useContext } from "react";
 const Cart = () => {
   const { user } = useContext(AuthContext);
-  console.log(user)
+  console.log(user);
   let token = localStorage.getItem("access");
   let [cartItems, setCartItems] = useState([]);
   let [isLoading, setIsLoading] = useState(false);
-
+ 
   let fetchcart = async () => {
     setIsLoading(true);
     try {

@@ -16,4 +16,6 @@ urlpatterns = [
     path('profile/', ProfileView.as_view()),
     path('cart/', CartView.as_view()),
     path('add-to-cart/', AddToCart.as_view()),
-]
+    path('increase/<int:pk>/', IncreaseQuantity.as_view()),
+    path('decrease/<int:pk>/', DecreaseQuantity.as_view()),
+ ]
