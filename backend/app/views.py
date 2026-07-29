@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser,FormParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter,OrderingFilter
 # Create your views here.
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
@@ -32,6 +34,14 @@ class Product_View(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
     parser_classes =[MultiPartParser,FormParser]
+
+    filter_backends=[DjangoFilterBackend,SearchFilter,OrderingFilter]
+    search_fields=["name","description","offer_price","cate__name"]
+    filterset_fields = ["cate"]
+    ordering_fields = [
+        "offer_price",
+        "created_at",
+    ]
 
 # class ProductDetailView(generics.ListAPIView):
 #     serializer_class = ProductSerializer
