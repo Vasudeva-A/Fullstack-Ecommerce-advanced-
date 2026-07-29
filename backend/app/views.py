@@ -132,3 +132,17 @@ class DecreaseQuantity(APIView):
             return Response({"message":"decreased succesfully"},status=status.HTTP_200_OK)
         return Response({'error':"Cannot decrease then 0"},status=status.HTTP_400_BAD_REQUEST)
 
+
+class RemoveFromCart(APIView):
+    permission_classes =[IsAuthenticated]
+    def delete(self,request,pk):
+        try:
+            cart_item =Cart.objects.get(id=pk,user=request.user)
+        except Cart.DoesNotExist:
+            return Response({
+                "error":"no item found to be deleted"
+            },status=status.HTTP_400_BAD_REQUEST)
+
+        cart_item.delete()
+        return Response({"message":"cart item deleted"},status=status.HTTP_200_OK)
+     
