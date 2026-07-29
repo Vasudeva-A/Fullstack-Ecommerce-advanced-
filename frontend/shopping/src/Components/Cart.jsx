@@ -3,13 +3,77 @@ import { BASE_URL } from "../config";
 import Loader from "./Loader/Loader";
 import { AuthContext } from "../Auths/AuthContext";
 import { useContext } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
 const Cart = () => {
+  let navigate= useNavigate()
   const { user } = useContext(AuthContext);
-  console.log(user);
+  // console.log(user);
+  // let {id} = useParams()
   let token = localStorage.getItem("access");
   let [cartItems, setCartItems] = useState([]);
   let [isLoading, setIsLoading] = useState(false);
- 
+
+  let increaseQuantity = async (id) => {
+    // setIsLoading(true);
+    try {
+      let response = await fetch(`${BASE_URL}/increase/${id}/`, {
+        method: "PATCH",
+        headers: {
+          // "Content-Type":"application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      let data = await response.json();
+      if (response.ok) {
+        fetchcart();
+      } else {
+        alert(data.error);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  let decreaseQuantity = async (id) => {
+    // setIsLoading(true);
+    try {
+      let response = await fetch(`${BASE_URL}/decrease/${id}/`, {
+        method: "PATCH",
+        headers: {
+          // "Content-Type":"application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      let data = await response.json();
+      if (response.ok) {
+        fetchcart();
+      } else {
+        alert(data.error);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  let removeCart = async (id) => {
+    try {
+      let response = await fetch(`${BASE_URL}/delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      let data = await response.json();
+      if (response.ok) {
+        fetchcart();
+      } else {
+        alert(data.error);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   let fetchcart = async () => {
     setIsLoading(true);
     try {
@@ -60,7 +124,9 @@ const Cart = () => {
                   style={{
                     height: "180px",
                     objectFit: "contain",
+                    cursor: "pointer"
                   }}
+                  onClick={() => navigate(`/products/${item.product.id}`)}
                 />
               </div>
 
@@ -88,13 +154,21 @@ const Cart = () => {
 
               {/* Buttons */}
               <div className="col-md-3 text-center">
-                <button className="btn btn-outline-primary w-75 mb-2">+</button>
+                <button
+                  className="btn btn-outline-primary w-75 mb-2"
+                  onClick={() => increaseQuantity(item.id)}
+                >
+                  +
+                </button>
 
-                <button className="btn btn-outline-secondary w-75 mb-2">
+                <button
+                  className="btn btn-outline-secondary w-75 mb-2"
+                  onClick={() => decreaseQuantity(item.id)}
+                >
                   -
                 </button>
 
-                <button className="btn btn-danger w-75">Remove</button>
+                <button onClick={()=>removeCart(item.id)} className="btn btn-danger w-75">Remove</button>
               </div>
             </div>
           </div>
