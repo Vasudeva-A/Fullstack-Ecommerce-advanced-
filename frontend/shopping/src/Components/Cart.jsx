@@ -57,7 +57,7 @@ const Cart = () => {
 
   let removeCart = async (id) => {
     try {
-      let response = await fetch(`${BASE_URL}/delete/${id}`, {
+      let response = await fetch(`${BASE_URL}/delete/${id}/`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

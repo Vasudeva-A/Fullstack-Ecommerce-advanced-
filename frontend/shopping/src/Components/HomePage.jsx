@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Slider from "../Includes/Slider";
 import Loader from "./Loader/Loader";
 import {BASE_URL} from "../config"
+// import { SearchContext } from "../Context/SearchContext";
 const HomePage = () => {
+  // let{search} = useContext(SearchContext)
   let [products, setProducts] = useState([]);
   let [isLoading, setIsLoading] = useState(true);
   let [error, setError] = useState(null);

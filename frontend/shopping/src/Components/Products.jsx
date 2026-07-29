@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Loader from "./Loader/Loader";
 import {BASE_URL} from "../config"
+import { SearchContext } from "../Context/SearchContext";
 const Products = () => {
   let [products, setProducts] = useState([]);
   let [isLoading, setIsLoading] = useState(true);
   let [error, setError] = useState(null);
+  let {search} = useContext(SearchContext)
   // const API_URL = "http://127.0.0.1:8000";
   useEffect(() => {
     let fetchProducts = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        let response = await fetch(`${BASE_URL}/products/`);
+        let response = await fetch(`${BASE_URL}/products/?search=${search}`);
         if (!response.ok) {
           // console.log(response)
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -27,7 +29,7 @@ const Products = () => {
       }
     };
     fetchProducts();
-  }, []);
+  }, [search]);
   if (isLoading) {
     return (
       <Loader/>

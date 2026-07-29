@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Auths/AuthContext";
+import { SearchContext } from "../Context/SearchContext";
 const Navbar = () => {
+  let{search,setSearch} = useContext(SearchContext)
   let { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
   let navigate = useNavigate();
   let handleLogout = () => {
@@ -85,6 +87,8 @@ const Navbar = () => {
               type="search"
               placeholder="Search"
               aria-label="Search"
+              value={search}
+              onChange={(e)=>setSearch(e.target.value)}
             />
             <button className="btn btn-outline-success" type="submit">
               Search
