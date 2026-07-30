@@ -4,9 +4,10 @@ import Loader from "./Loader/Loader";
 import { AuthContext } from "../Auths/AuthContext";
 import { useContext } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Cart = () => {
-  let navigate= useNavigate()
+  let navigate = useNavigate();
   const { user } = useContext(AuthContext);
   // console.log(user);
   // let {id} = useParams()
@@ -56,6 +57,19 @@ const Cart = () => {
   };
 
   let removeCart = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to remove this product from your cart?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       let response = await fetch(`${BASE_URL}/delete/${id}/`, {
         method: "DELETE",
@@ -63,17 +77,35 @@ const Cart = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      let data = await response.json();
+
       if (response.ok) {
+        await Swal.fire({
+          title: "Removed!",
+          text: "Product removed from your cart.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
         fetchcart();
       } else {
-        alert(data.error);
+        let data = await response.json();
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: data.error || "Something went wrong.",
+        });
       }
     } catch (err) {
       console.log(err);
+
+      Swal.fire({
+        icon: "error",
+        title: "Network Error",
+        text: "Please try again later.",
+      });
     }
   };
-
   let fetchcart = async () => {
     setIsLoading(true);
     try {
@@ -124,7 +156,7 @@ const Cart = () => {
                   style={{
                     height: "180px",
                     objectFit: "contain",
-                    cursor: "pointer"
+                    cursor: "pointer",
                   }}
                   onClick={() => navigate(`/products/${item.product.id}`)}
                 />
@@ -168,7 +200,12 @@ const Cart = () => {
                   -
                 </button>
 
-                <button onClick={()=>removeCart(item.id)} className="btn btn-danger w-75">Remove</button>
+                <button
+                  onClick={() => removeCart(item.id)}
+                  className="btn btn-danger w-75"
+                >
+                  Remove
+                </button>
               </div>
             </div>
           </div>

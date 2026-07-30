@@ -90,9 +90,9 @@ const Navbar = () => {
               value={search}
               onChange={(e)=>setSearch(e.target.value)}
             />
-            <button className="btn btn-outline-success" type="submit">
+            {/* <button className="btn btn-outline-success" type="submit">
               Search
-            </button>
+            </button> */}
           </form>
         </div>
       </div>

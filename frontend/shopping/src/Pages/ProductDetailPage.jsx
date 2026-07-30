@@ -3,19 +3,20 @@ import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../Components/Loader/Loader";
 import { BASE_URL } from "../config";
 import ButtonLoader from "../Components/Loader/ButtonLoader";
+import Swal from 'sweetalert2'
+
 const ProductDetailPage = () => {
-  let navigate = useNavigate()
+  let navigate = useNavigate();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   let [isLoading, setIsLoading] = useState(false);
   let token = localStorage.getItem("access");
 
-
   let handleAddToCart = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     if (!token) {
       alert("Please login first");
-      navigate('/login')
+      navigate("/login");
       return;
     }
     try {
@@ -31,18 +32,20 @@ const ProductDetailPage = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        alert('added to cart');
+        Swal.fire({
+          title: "Item Added To Cart",
+          icon: "success",
+          draggable: true,
+        });
       } else {
         alert(data.error || "Something went wrong");
       }
     } catch (err) {
       console.log(err);
-    }finally{
-      setIsLoading(false)
+    } finally {
+      setIsLoading(false);
     }
   };
-
-
 
   useEffect(() => {
     fetch(`${BASE_URL}/products/${id}/`)
@@ -131,11 +134,12 @@ const ProductDetailPage = () => {
               </div>
 
               <div className="mt-4 d-flex gap-3">
-                <button className="btn btn-outline-dark btn-lg border-1 shadow-lg" onClick={handleAddToCart} disabled={isLoading}>
-                  {
-                
-                isLoading ?"Adding..." :'Add To Cart'
-                }
+                <button
+                  className="btn btn-outline-dark btn-lg border-1 shadow-lg"
+                  onClick={handleAddToCart}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Adding..." : "Add To Cart"}
                 </button>
 
                 <button className="btn btn-success btn-lg">Buy Now</button>

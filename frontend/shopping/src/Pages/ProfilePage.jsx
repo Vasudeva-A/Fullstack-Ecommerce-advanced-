@@ -46,7 +46,7 @@ const ProfilePage = () => {
     formData.append("profile_image", image);
 
     try {
-      const response = await fetch(`${BASE_URL}/register/profile/`, {
+      const response = await fetch(`${BASE_URL}/profile/`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -65,63 +65,93 @@ const ProfilePage = () => {
     return <Loader/>
   }
 
-  return (
-    <div style={{ width: "350px", margin: "40px auto" }}>
-      <h2>My Profile</h2>
+ return (
+  <div className="container py-5">
+    <div className="row justify-content-center">
+      <div className="col-md-6 col-lg-5">
+        <div className="card shadow-lg border-0 rounded-4">
 
-      {/* Profile Image */}
+          <div className="card-body p-5 text-center">
 
-      {profile.profile_image ? (
-        <img
-          src={profile.profile_image}
-          alt=""
-          style={{
-            width: 120,
-            height: 120,
-            borderRadius: "50%",
-            objectFit: "cover",
-            border: "2px solid gray",
-          }}
-        />
-      ) : (
-        <div
-          style={{
-            width: 120,
-            height: 120,
-            borderRadius: "50%",
-            background: "#0d6efd",
-            color: "white",
-            fontSize: "50px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            fontWeight: "bold",
-          }}
-        >
-          {profile.email.charAt(0).toUpperCase()}
+            <h2 className="fw-bold mb-4 text-primary">
+              My Profile
+            </h2>
+
+            {/* Profile Image */}
+            {profile.profile_image ? (
+              <img
+                src={profile.profile_image}
+                alt="Profile"
+                className="rounded-circle shadow"
+                style={{
+                  width: "150px",
+                  height: "150px",
+                  objectFit: "cover",
+                  border: "4px solid #0d6efd",
+                }}
+              />
+            ) : (
+              <div
+                className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center mx-auto shadow"
+                style={{
+                  width: "150px",
+                  height: "150px",
+                  fontSize: "60px",
+                  fontWeight: "bold",
+                }}
+              >
+                {profile.email.charAt(0).toUpperCase()}
+              </div>
+            )}
+
+            <div className="mt-4">
+              <input
+                type="file"
+                className="form-control"
+                onChange={handleImage}
+              />
+
+              <button
+                className="btn btn-primary w-100 mt-3"
+                onClick={uploadImage}
+              >
+                Upload Image
+              </button>
+            </div>
+
+            <hr className="my-4" />
+
+            <div className="text-start">
+
+              <div className="mb-3">
+                <h6 className="text-muted mb-1">Username</h6>
+                <p className="fw-semibold fs-5">{profile.username}</p>
+              </div>
+
+              <div className="mb-3">
+                <h6 className="text-muted mb-1">Email</h6>
+                <p>{profile.email}</p>
+              </div>
+
+              <div className="mb-3">
+                <h6 className="text-muted mb-1">Phone</h6>
+                <p>{profile.phone || "Not Provided"}</p>
+              </div>
+
+              <div className="mb-3">
+                <h6 className="text-muted mb-1">Address</h6>
+                <p>{profile.address || "Not Provided"}</p>
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
-      )}
-
-      <br />
-
-      <input type="file" onChange={handleImage} />
-
-      <br />
-      <br />
-
-      <button onClick={uploadImage}>Upload Image</button>
-
-      <hr />
-
-      <h4>{profile.username}</h4>
-
-      <p>Email : {profile.email}</p>
-
-      <p>Phone : {profile.phone}</p>
-
-      <p>Address : {profile.address}</p>
+      </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default ProfilePage;
