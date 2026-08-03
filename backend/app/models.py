@@ -27,8 +27,8 @@ class Product(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, related_name="profile", on_delete=models.CASCADE)
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
-    phone = models.CharField(max_length=50)
-    address = models.TextField()
+    phone = models.CharField(max_length=50,blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
     
     def __str__(self):
         return self.user.username
@@ -50,3 +50,37 @@ class Cart(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.product.name}"
+
+
+
+class Order(models.Model):
+    STATUS = (
+        ("Pending", "Pending"),
+        ("Confirmed", "Confirmed"),
+        ("Shipped", "Shipped"),
+        ("Delivered", "Delivered"),
+        ("Cancelled", "Cancelled"),
+    )
+
+    user = models.ForeignKey(User,related_name="orders",on_delete=models.CASCADE)
+    total_amount = models.DecimalField( max_digits=15, decimal_places=2)
+    status = models.CharField(choices=STATUS,default="Pending", max_length=50)
+    payment_method = models.CharField(max_length=50, blank=True)
+    payment_status = models.CharField(max_length=30, default="Pending")
+
+    address = models.TextField(blank=True)
+
+    phone = models.CharField(max_length=15, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}- {self.status}"
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name="items", on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField( max_digits=15, decimal_places=2)
+
+    def __str__(self):
+        return self.product.name

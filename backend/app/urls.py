@@ -19,4 +19,8 @@ urlpatterns = [
     path('increase/<int:pk>/', IncreaseQuantity.as_view()),
     path('decrease/<int:pk>/', DecreaseQuantity.as_view()),
     path('delete/<int:pk>/', RemoveFromCart.as_view()),
+    path('create-order/', CreateOrder.as_view()),
+    path('my-orders/', MyOrders.as_view()),
+    path('buy-now/', BuyNow.as_view()),
  ]
+

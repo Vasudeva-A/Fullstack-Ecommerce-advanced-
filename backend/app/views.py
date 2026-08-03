@@ -156,3 +156,91 @@ class RemoveFromCart(APIView):
         cart_item.delete()
         return Response({"message":"cart item deleted"},status=status.HTTP_200_OK)
      
+
+
+
+class CreateOrder(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+
+        cart_items = Cart.objects.filter(user=request.user)
+
+        if not cart_items.exists():
+            return Response(
+                {"error": "Cart is empty"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        order = Order.objects.create(
+            user=request.user,
+            total_amount=0
+        )
+
+        grand_total = 0
+
+        for item in cart_items:
+
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.product.offer_price,
+            )
+
+            grand_total += item.quantity * item.product.offer_price
+
+        order.total_amount = grand_total
+        order.save()
+
+        cart_items.delete()
+
+        return Response(
+            {
+                "message": "Order created successfully",
+                "order_id": order.id,
+                "total_amount": order.total_amount,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+class MyOrders(APIView):
+    permission_classes =[IsAuthenticated]
+    def get(self,request):
+        orders = Order.objects.filter(user=request.user)
+        serializers = OrderSerializer(orders,many=True)
+        return Response(serializers.data)
+
+class BuyNow(APIView):
+    permission_classes =[IsAuthenticated]
+    def post(self,request):
+        product_id = request.data.get('product_id')
+        quantity = request.data.get("quantity",1)
+        try:
+            product =Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            return Response(
+                {"error": "Product not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        total = quantity * product.offer_price
+
+        order = Order.objects.create(
+            user=request.user,
+            total_amount=total,
+        )
+
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            quantity=quantity,
+            price=product.offer_price,
+        )
+
+        return Response(
+            {
+                "message": "Order placed successfully",
+                "order_id": order.id,
+            },
+            status=status.HTTP_201_CREATED,
+        )
