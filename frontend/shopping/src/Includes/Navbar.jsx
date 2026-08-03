@@ -60,6 +60,11 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li className="nav-item">
+                  <Link className="nav-link" to="/orders">
+                    Order
+                  </Link>
+                </li>
+                <li className="nav-item">
                   <button onClick={handleLogout} className="btn nav-link">
                     Logout
                   </button>

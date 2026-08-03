@@ -1,48 +1,55 @@
 import React, { useEffect, useState } from "react";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 import Loader from "../Components/Loader/Loader";
-import {BASE_URL} from "../config"
-const ProfilePage = () => {
-  let [profile, setProfile] = useState();
-  let [image, setImage] = useState(null);
-  let token = localStorage.getItem("access");
-  //   console.log(token)
-  let navigate = useNavigate()
+import { BASE_URL } from "../config";
 
-  let fetchProducts = async () => {
+const ProfilePage = () => {
+  const [profile, setProfile] = useState(null);
+  const [image, setImage] = useState(null);
+
+  const token = localStorage.getItem("access");
+  const navigate = useNavigate();
+
+  const fetchProfile = async () => {
     try {
-      let response = await fetch(`${BASE_URL}/profile/`, {
+      const response = await fetch(`${BASE_URL}/profile/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (response.status === 401){
-        alert("Your Session has been Expired TO continue Please Login Again")
-        localStorage.removeItem("access")
-        localStorage.removeItem("refresh")
-        navigate('/login')
-        return
+
+      if (response.status === 401) {
+        alert("Session Expired. Please Login Again.");
+
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+
+        navigate("/login");
+        return;
       }
-      let data = await response.json();
+
+      const data = await response.json();
       setProfile(data);
     } catch (err) {
       console.log(err);
     }
   };
+
   useEffect(() => {
-    fetchProducts();
+    fetchProfile();
   }, []);
 
-  let handleImage = (e) => {
+  const handleImage = (e) => {
     setImage(e.target.files[0]);
   };
 
-  let uploadImage = async () => {
+  const uploadImage = async () => {
     if (!image) {
-      alert("Please Upload a image ");
+      alert("Please choose an image.");
       return;
     }
-    let formData = new FormData();
+
+    const formData = new FormData();
     formData.append("profile_image", image);
 
     try {
@@ -53,94 +60,134 @@ const ProfilePage = () => {
         },
         body: formData,
       });
+
       if (response.ok) {
-        alert("Profile image updated");
-        fetchProducts();
+        alert("Profile image updated successfully.");
+        fetchProfile();
+        setImage(null);
       }
     } catch (err) {
       console.log(err);
     }
   };
-  if (!profile)  {
-    return <Loader/>
+
+  if (!profile) {
+    return <Loader />;
   }
 
- return (
-  <div className="container py-5">
-    <div className="row justify-content-center">
-      <div className="col-md-6 col-lg-5">
-        <div className="card shadow-lg border-0 rounded-4">
+  return (
+    <div className="container py-5">
+      <div className="row justify-content-center">
 
-          <div className="card-body p-5 text-center">
+        <div className="col-lg-6">
 
-            <h2 className="fw-bold mb-4 text-primary">
-              My Profile
-            </h2>
+          <div className="card border-0 shadow-lg rounded-4">
 
-            {/* Profile Image */}
-            {profile.profile_image ? (
-              <img
-                src={profile.profile_image}
-                alt="Profile"
-                className="rounded-circle shadow"
-                style={{
-                  width: "150px",
-                  height: "150px",
-                  objectFit: "cover",
-                  border: "4px solid #0d6efd",
-                }}
-              />
-            ) : (
-              <div
-                className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center mx-auto shadow"
-                style={{
-                  width: "150px",
-                  height: "150px",
-                  fontSize: "60px",
-                  fontWeight: "bold",
-                }}
-              >
-                {profile.email.charAt(0).toUpperCase()}
-              </div>
-            )}
+            <div className="card-body p-5">
 
-            <div className="mt-4">
-              <input
-                type="file"
-                className="form-control"
-                onChange={handleImage}
-              />
+              <h2 className="text-center fw-bold text-primary mb-4">
+                My Profile
+              </h2>
 
-              <button
-                className="btn btn-primary w-100 mt-3"
-                onClick={uploadImage}
-              >
-                Upload Image
-              </button>
-            </div>
+              <div className="text-center mb-4">
 
-            <hr className="my-4" />
+                {profile.profile_image ? (
+                  <img
+                    src={profile.profile_image}
+                    alt="Profile"
+                    className="rounded-circle shadow"
+                    style={{
+                      width: "170px",
+                      height: "170px",
+                      objectFit: "cover",
+                      border: "5px solid #0d6efd",
+                    }}
+                  />
+                ) : (
+                  <div
+                    className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto shadow"
+                    style={{
+                      width: "170px",
+                      height: "170px",
+                      fontSize: "70px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {profile.email.charAt(0).toUpperCase()}
+                  </div>
+                )}
 
-            <div className="text-start">
+                <div className="mt-4">
 
-              <div className="mb-3">
-                <h6 className="text-muted mb-1">Username</h6>
-                <p className="fw-semibold fs-5">{profile.username}</p>
+                  <input
+                    type="file"
+                    className="form-control"
+                    onChange={handleImage}
+                  />
+
+                  <button
+                    className="btn btn-primary w-100 mt-3"
+                    onClick={uploadImage}
+                  >
+                    Upload Profile Image
+                  </button>
+
+                </div>
+
               </div>
 
-              <div className="mb-3">
-                <h6 className="text-muted mb-1">Email</h6>
-                <p>{profile.email}</p>
-              </div>
+              <hr />
 
               <div className="mb-3">
-                <h6 className="text-muted mb-1">Phone</h6>
-                <p>{profile.phone || "Not Provided"}</p>
+                <label className="form-label fw-bold text-secondary">
+                  Username
+                </label>
+
+                <div className="form-control bg-light">
+                  {profile.username}
+                </div>
               </div>
 
+              {/* <div className="mb-3">
+                <label className="form-label fw-bold text-secondary">
+                  Email
+                </label>
+
+                <div className="form-control bg-light">
+                  {profile.email}
+                </div>
+              </div> */}
+
               <div className="mb-3">
-                <h6 className="text-muted mb-1">Address</h6>
-                <p>{profile.address || "Not Provided"}</p>
+                <label className="form-label fw-bold text-secondary">
+                  Phone Number
+                </label>
+
+                <div className="form-control bg-light">
+                  {profile.phone || "Not Added"}
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="form-label fw-bold text-secondary">
+                  Address
+                </label>
+
+                <div
+                  className="form-control bg-light"
+                  style={{ minHeight: "90px" }}
+                >
+                  {profile.address || "Not Added"}
+                </div>
+              </div>
+
+              <div className="d-grid">
+                <button
+                  className="btn btn-outline-primary btn-lg"
+                  onClick={() => navigate("/profile/edit")}
+                >
+                  Edit Profile
+                </button>
               </div>
 
             </div>
@@ -148,10 +195,10 @@ const ProfilePage = () => {
           </div>
 
         </div>
+
       </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default ProfilePage;

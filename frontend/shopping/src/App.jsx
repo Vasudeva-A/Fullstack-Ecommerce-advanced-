@@ -9,6 +9,8 @@ import Category from "./Components/Category";
 import CategoryProductsPage from "./Pages/CategoryProductsPage";
 import ProductDetailPage from "./Pages/ProductDetailPage";
 import ProfilePage from "./Pages/ProfilePage";
+import OrderPage from "./Pages/OrderPage";
+import EditProfile from "./Auths/EditProfile";
 
 function App() {
   return (
@@ -26,8 +28,9 @@ function App() {
           <Route path="/cart" element={<Cart />} />  
           <Route path="/category" element={<Category />} />  
           <Route path="/category/:id" element={<CategoryProductsPage />} />  
-          <Route path="/profile" element={<ProfilePage />} />  
-          {/* <Route path="/cart" element={<Cart />} />   */}
+          <Route path="/profile" element={<ProfilePage />} />    
+          <Route path="/profile/edit" element={<EditProfile />} />    
+          <Route path="/orders" element={<OrderPage />} />   
         </Routes>
       </BrowserRouter>
      

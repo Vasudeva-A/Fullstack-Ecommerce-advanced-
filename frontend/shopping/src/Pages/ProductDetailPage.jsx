@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../Components/Loader/Loader";
 import { BASE_URL } from "../config";
 import ButtonLoader from "../Components/Loader/ButtonLoader";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
 const ProductDetailPage = () => {
   let navigate = useNavigate();
@@ -11,7 +11,59 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
   let [isLoading, setIsLoading] = useState(false);
   let token = localStorage.getItem("access");
+  const handleBuyNow = async () => {
+    if (!token) {
+      alert("Please login first");
+      navigate("/login");
+      return;
+    }
 
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`${BASE_URL}/buy-now/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          product_id: product.id,
+          quantity: 1,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        await Swal.fire({
+          title: "Order Placed!",
+          text: "Your order has been placed successfully.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        navigate("/orders");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: data.error || "Something went wrong",
+        });
+      }
+    } catch (err) {
+      console.log(err);
+
+      Swal.fire({
+        icon: "error",
+        title: "Network Error",
+        text: "Please try again later.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   let handleAddToCart = async () => {
     setIsLoading(true);
     if (!token) {
@@ -142,7 +194,13 @@ const ProductDetailPage = () => {
                   {isLoading ? "Adding..." : "Add To Cart"}
                 </button>
 
-                <button className="btn btn-success btn-lg">Buy Now</button>
+                <button
+                  className="btn btn-warning"
+                  onClick={handleBuyNow}
+                  disabled={isLoading}
+                >
+                  {isLoading ? <ButtonLoader /> : "Buy Now"}
+                </button>
               </div>
             </div>
           </div>
