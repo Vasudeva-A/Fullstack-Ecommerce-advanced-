@@ -11,6 +11,7 @@ import ProductDetailPage from "./Pages/ProductDetailPage";
 import ProfilePage from "./Pages/ProfilePage";
 import OrderPage from "./Pages/OrderPage";
 import EditProfile from "./Auths/EditProfile";
+import Chatbot from "./Components/Chatbot";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />    
           <Route path="/profile/edit" element={<EditProfile />} />    
           <Route path="/orders" element={<OrderPage />} />   
+          <Route path="/chatbot" element={<Chatbot />} />   
         </Routes>
       </BrowserRouter>
      

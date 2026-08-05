@@ -78,6 +78,12 @@ const Navbar = () => {
                     Cart
                   </Link>
                 </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/chatbot">
+                    <i className="bi bi-cart3 me-1"></i>
+                    Chatbot
+                  </Link>
+                </li>
 
                 {/* User Dropdown */}
 
