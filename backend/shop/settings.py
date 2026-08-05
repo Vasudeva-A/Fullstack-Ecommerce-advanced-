@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'app',
+    'dashboard',
     'corsheaders',
+    'chatbot',
     'django_filters',
 ]
 
